@@ -1,0 +1,29 @@
+name: CWTools CI
+
+on:
+  push:
+    branches:    
+    - master
+  pull_request:
+    paths: 
+    - '**'
+
+jobs:
+  cwtools_job:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: Yard1/CWTools-action@gitlab-integration
+      with:
+        game: hoi4
+        vanillaMode: 1
+        changedFilesOnly: 0
+        suppressedOffenceCategories: '{"failure":[], "warning":["CW242"], "notice":[]}'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload artifact
+      if: always()
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: cwtools_output
+        path: output.json
